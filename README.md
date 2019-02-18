@@ -36,6 +36,6 @@ To reproduce Figure 3a run
 
 plot_figure3a
 
-Note: the paths to the data on your local machine will need to be edited withing these codes. 
+Note: the paths to the data on your local machine will need to be edited within these codes. 
 
 For any more information on the codes or data necessary to reproduce the plots, please email eoincarley@gmail.com
