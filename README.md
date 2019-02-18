@@ -15,6 +15,8 @@ All data were processed using the standard packages in SolarSoft. For example:
 - AIA was preprocessed using aia_prep.pro and plot using the standard plot_map.pro routines.
 - NRH visibilities were processed to images and CLEANed using the standard nrh GUI in SolarSoft. The default CLEAN parameters were used. Note that NRH visibilities to image processing and CLEANing may take several hours
 on a standard machine.
+- Orfées and NDA were background subtracted and plot using the standard routines of the ETHZ package e.g., spectro_plot.pro.
+- The DEM maps were produce using the packages available at http://www.lmsal.com/~cheung/AIA/tutorial_dem/
 
 # Example
 To reproduce Figure 2a-b run
@@ -30,6 +32,5 @@ To reproduce Figure 3a run
 plot_figure3a
 
 Note: the paths to the data on your local machine will need to be edited withing these codes.
-
 
 For any information on the codes or data necessary to reproduce the plots, please email eoincarley@gmail.com
