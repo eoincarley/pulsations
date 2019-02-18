@@ -10,7 +10,7 @@ All code can be run on a standard laptop or desktop (currently runs smoothly on 
 
 # Data Access
 
-The the radio data sets are available in the Nancay archives at http://secchirh.obspm.fr. Any AIA or HMI datasets are available at the SDO data archive and can be donwloaded using the relevant SolarSoft VSO packages. FERMI data can be obtained using the standard RHESSI GUI in SolarSoft. RSTN data can be obtained from ftp://ftp.ngdc.noaa.gov/STP/space-weather/solar-data/solar-features/solar-radio/rstn-1-second/
+The NRH, Orfées and NDA radio data sets are available in the Nancay archives at http://secchirh.obspm.fr. Any AIA or HMI datasets are available at the SDO data archive and can be donwloaded using the relevant SolarSoft VSO packages. FERMI data can be obtained using the standard RHESSI GUI in SolarSoft. RSTN data can be obtained from ftp://ftp.ngdc.noaa.gov/STP/space-weather/solar-data/solar-features/solar-radio/rstn-1-second/. GOES data can be obtained through the standard GOES Object of SolarSoft: https://hesperia.gsfc.nasa.gov/rhessidatacenter/complementary_data/goes.html
 
 # Data processing
 
@@ -37,4 +37,4 @@ plot_figure3a
 
 Note: the paths to the data on your local machine will need to be edited withing these codes. 
 
-For any information on the codes or data necessary to reproduce the plots, please email eoincarley@gmail.com
+For any more information on the codes or data necessary to reproduce the plots, please email eoincarley@gmail.com
