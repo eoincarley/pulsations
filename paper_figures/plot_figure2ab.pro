@@ -125,7 +125,7 @@ pro plot_goes, t1, t2
 END
 
 
-pro plot_goes_dam_orfees_pulse_paper, postscript=postscript
+pro plot_figure2ab, postscript=postscript
 
 	; For Figure 2 of the paper.
 
