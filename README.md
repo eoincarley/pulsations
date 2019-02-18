@@ -1,8 +1,12 @@
 # Pulsation analysis
 Codes for analysis of pulsation event on 2014-Apr-18. 
 
-# Requirements
-The codes in this repo requires Interactive Data Language (IDL) version 7.x or greater and an up-to-date SolarSoft Installation (with installation instructions here: https://sohowww.nascom.nasa.gov/solarsoft/). Note SolarSoft installation time may take several hours depending on which packages are being downloaded. All code can be run on a standard laptop or desktop (currently runs smoothly on iMac with 32 Gb RAM and 3.2 GHz processor).
+# Software Requirements
+The codes in this repo requires Interactive Data Language (IDL) version 7.x or greater and an up-to-date SolarSoft Installation (with installation instructions here: https://sohowww.nascom.nasa.gov/solarsoft/). Note the SolarSoft installation time may take several hours depending on which packages are being downloaded. 
+
+# Hardware requirements
+
+All code can be run on a standard laptop or desktop (currently runs smoothly on iMac with 32 Gb RAM and 3.2 GHz processor). The NRH processing and NLFFF analysis in particular may take several hours to run on a standard machine. The AIA and NRH data sets are large, you may need up to 50 Gb of free space on your harddrive.
 
 # Data Access
 
@@ -31,6 +35,6 @@ To reproduce Figure 3a run
 
 plot_figure3a
 
-Note: the paths to the data on your local machine will need to be edited withing these codes.
+Note: the paths to the data on your local machine will need to be edited withing these codes. 
 
 For any information on the codes or data necessary to reproduce the plots, please email eoincarley@gmail.com
