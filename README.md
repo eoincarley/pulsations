@@ -6,7 +6,7 @@ The codes in this repo requires Interactive Data Language (IDL) version 7.x or g
 
 # Hardware requirements
 
-All code can be run on a standard laptop or desktop (currently runs smoothly on iMac with 32 Gb RAM and 3.2 GHz processor). The NRH processing and NLFFF analysis in particular may take several hours to run on a standard machine. The AIA and NRH data sets are large, you may need up to 50 Gb of free space on your harddrive.
+All code can be run on a standard laptop or desktop (currently runs smoothly on iMac with 32 GB RAM and 3.2 GHz processor). The NRH processing and NLFFF analysis in particular may take several hours to run on a standard machine. The AIA and NRH data sets are large, you may need up to 50 GB of free space on your hard drive.
 
 # Data Access
 
