@@ -21,6 +21,7 @@ All data were processed using the standard packages in SolarSoft. For example:
 on a standard machine.
 - Orfées and NDA were background subtracted and plot using the standard routines of the ETHZ package e.g., spectro_plot.pro.
 - The DEM maps were produce using the packages available at http://www.lmsal.com/~cheung/AIA/tutorial_dem/
+- Instructions on the use of PFSS can be found here: https://www.lmsal.com/~derosa/pfsspack/
 
 # Example
 To reproduce Figure 2a-b run
