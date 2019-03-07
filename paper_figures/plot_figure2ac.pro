@@ -15,7 +15,7 @@ pro setup_ps, name
 
 end
 
-pro plot_spec, data, time, freqs, frange, trange, scl0=scl0, scl1=scl1
+pro plot_spec, data, time, freqs, frange, trange, scl0=scl0, scl1=scl1, x0pos=x0pos, x1pos=x1pos
 	
 
 	print, 'Processing: '+string(freqs[0], format=string('(I4)')) + $
@@ -39,7 +39,7 @@ pro plot_spec, data, time, freqs, frange, trange, scl0=scl0, scl1=scl1
   				yr=[ frange[0], frange[1] ], $
   				xrange = [ trange[0], trange[1] ], $
   				/noerase, $
-  				position = [0.11, 0.5, 0.95, 0.79]
+  				position = [x0pos, 0.5, x1pos, 0.79]
 		
   	
 END
@@ -69,7 +69,7 @@ END
 ;**********************************************;
 ;				Plot GOES
 
-pro plot_goes, t1, t2
+pro plot_goes, t1, t2, x0pos=x0pos, x1pos=x1pos
 
 		x1 = anytim(file2time(t1), /utim)
 		x2 = anytim(file2time(t2), /utim)
@@ -91,7 +91,7 @@ pro plot_goes, t1, t2
 				/xs, $
 				yrange = [1e-9,1e-3], $
 				/ylog, $
-				position = [0.11, 0.8, 0.95, 0.98], $
+				position = [x0pos, 0.8, x1pos, 0.98], $
 				/normal, $
 				/noerase
 				
@@ -125,7 +125,7 @@ pro plot_goes, t1, t2
 END
 
 
-pro plot_figure2ab, postscript=postscript
+pro plot_figure2ac, postscript=postscript
 
 	; For Figure 2 of the paper.
 
@@ -142,22 +142,24 @@ pro plot_figure2ab, postscript=postscript
 	time0 = '20140418_122500'
 	time1 = '20140418_132000'
 	date_string = time2file(file2time(time0), /date)
+	x0pos = 0.08
+	x1pos = 0.91
 
 	if keyword_set(postscript) then begin
 		setup_ps, '~/Data/2014_apr_18/pulsations/goes_nda_orfees_pulse_20140418.eps
 	endif else begin	
 		loadct, 0
-		window, 0, xs=900, ys=1200, retain=2
 		!p.charsize=1.0
 		!p.color=255
-		!p.background=0
+		!p.background=100
+		window, 0, xs=900, ys=1200, retain=2
 	endelse			
 
 		;***********************************;
 		;			Plot GOES		
 		;***********************************;
 		set_line_color
-		plot_goes, time0, time1
+		plot_goes, time0, time1, x0pos=x0pos, x1pos=x1pos
 
 		;***********************************;
 		;		Read and process DAM		
@@ -191,16 +193,22 @@ pro plot_figure2ab, postscript=postscript
 		
 		dam_spec = alog10(dam_spec)	
 		dam_spec = constbacksub(dam_spec, /auto)
+		dam_spec = dam_spec*3.0
 
 
 		;***********************************;
 		;	Read and pre-processed Orfees		
 		;***********************************;	
 
-		restore, orfees_folder+'orf_'+date_string+'_bsubbed_minimum.sav', /verb
-		orf_spec = orfees_struct.spec
-		orf_time = orfees_struct.time
-		orf_freqs = orfees_struct.freq
+		restore, orfees_folder+'orf_20140418_bsubbed_minimum_sfu.sav', /verb
+		orf_spec = orf_spec/max(orf_spec)
+		orf_spec = orf_spec*3.3  	; Scale arbitrarily so it fits 0-1 intensity range. Neater for colorbar
+		;orf_spec = orfees_struct.spec
+		;orf_time = orfees_struct.time
+		;orf_freqs = reverse(orfees_struct.freq)
+		;orf_spec = slide_backsub(orf_spec, orf_time, 25.0*60.0, /minimum)	
+
+	
 
 
 		;skip_orfees: print, 'Skipped Orfees.'
@@ -210,11 +218,12 @@ pro plot_figure2ab, postscript=postscript
 
   		loadct, 74, /silent
 		reverse_ct
+		
 		scl_lwr = -0.4				;Lower intensity scale for the plots.		
 
-		plot_spec, dam_spec, dam_time, dam_freqs, [freq0, freq1], [time0, time1], scl0=-0.0, scl1=0.4
+		plot_spec, dam_spec, dam_time, dam_freqs, [freq0, freq1], [time0, time1], scl0=0.0, scl1=1.0, x0pos=x0pos, x1pos=x1pos
 		
-		plot_spec, orf_spec, orf_time, reverse(orf_freqs), [freq0, freq1], [time0, time1], scl0=-0.1, scl1=1.2
+		plot_spec, orf_spec, orf_time, orf_freqs, [freq0, freq1], [time0, time1], scl0=0.0, scl1=1.0, x0pos=x0pos, x1pos=x1pos
 		
 		loadct, 0, /silent
 		plot_times = anytim(file2time([time0, time1]), /utim)
@@ -228,7 +237,7 @@ pro plot_figure2ab, postscript=postscript
   				yr=[freq1, freq0 ], $
   				xrange = plot_times, $
   				/noerase, $
-  				position = [0.11, 0.5, 0.95, 0.79], $
+  				position = [x0pos, 0.5, x1pos, 0.79], $
   				xticklen = -0.012, $
   				yticklen = -0.015
 
@@ -238,15 +247,18 @@ pro plot_figure2ab, postscript=postscript
 		freq0 = 170
 		freq1 = 300
 		time0 = '20140418_125400'
-		time1 = '20140418_125740'		
+		time1 = '20140418_125740'	
+		scl0 = 0.0
+		scl1 = 1.0	
   		;plot_spec, orf_spec, orf_time, reverse(orf_freqs), [freq0, freq1], [time0, time1], scl0=-0.1, scl1=1.2
 		
   		loadct, 74, /silent
   		reverse_ct
+  		
 		trange = anytim(file2time([time0, time1]), /utim)
-		spectro_plot, smooth(orf_spec,1) > (-0.1) < (1.2), $
+		spectro_plot, orf_spec > scl0 < scl1, $
 	  				orf_time, $
-	  				reverse(orf_freqs), $
+	  				orf_freqs, $
 	  				/xs, $
 	  				/ys, $
 	  				;/ylog, $
@@ -255,12 +267,10 @@ pro plot_figure2ab, postscript=postscript
 					xticklen=-1e-5, $
 					yticklen=-1e-5, $
 					xtitle=' ', $
-	  				;ytitle='Frequency (MHz)', $
-	  				;title = 'Orfees and DAM', $
-	  				yr=[ freq0, freq1 ], $
+	  				yr = [ freq0, freq1 ], $
 	  				xrange = [ trange[0], trange[1] ], $
 	  				/noerase, $
-	  				position = [0.11, 0.22, 0.95, 0.44]
+	  				position = [x0pos, 0.22, x1pos, 0.44]
 
 		loadct, 0
 		plot_times = anytim(file2time([time0, time1]), /utim)
@@ -274,18 +284,58 @@ pro plot_figure2ab, postscript=postscript
   				yr=[freq1, freq0 ], $
   				xrange = plot_times, $
   				/noerase, $
-  				position = [0.11, 0.22, 0.95, 0.44], $
+  				position = [x0pos, 0.22, x1pos, 0.44], $
   				xticklen = -0.012, $
   				yticklen = -0.015
 	
+  		;------------------------------------------;
+  		;			For Orfées Zoom
+  		;
+		;set_line_color
+		;cgColorbar, Range=[scl0, scl1], $
+	    ;   OOB_Low='rose', OOB_High='charcoal', /vertical, /right, title='a.u.', $
+	    ;   position = [0.92, 0.22, 0.93, 0.32 ], charsize=0.9, color=0, OOB_FACTOR=0.0, format='(f3.1)', $
+	    ;   TICKINTERVAL = 0.1
 
+	    ;loadct, 74
+		;reverse_ct
+	  	;cgColorbar, Range=[scl0, scl1], $
+	    ;   OOB_Low='rose', OOB_High='charcoal', title='  ', /vertical, /right, $
+	    ;   position = [0.92, 0.22, 0.93, 0.32 ], charsize=0.9, color=100, ytickformat='(A1)', OOB_FACTOR=0.0, format='(f3.1)', $
+	    ;   TICKINTERVAL = 0.1
 
+	    ;------------------------------------------;
+  		;			For Orfées 
+  		;
+	    set_line_color
+		cgColorbar, Range=[scl0, scl1], $
+	       OOB_Low='rose', OOB_High='charcoal', /vertical, /right, title='Arbitrary Units', $
+	       position = [0.92, 0.5, 0.93, 0.64 ], charsize=1.0, color=0, OOB_FACTOR=0.0, format='(f3.1)', $
+	       TICKINTERVAL = 0.2
 
-		set_line_color
-		;xyouts, 0.925-0.002, 0.38, 'd', /normal, color=0
-		;xyouts, 0.925+0.002, 0.38, 'd', /normal, color=0
-		;xyouts, 0.925, 0.38, 'd', /normal, color=1
-	
+	    loadct, 74
+	    reverse_ct
+	  	cgColorbar, Range=[scl0, scl1], $
+	       OOB_Low='rose', OOB_High='charcoal', title='  ', /vertical, /right, $
+	       position = [0.92, 0.5, 0.93, 0.64 ], charsize=1.0, color=100, ytickformat='(A1)', OOB_FACTOR=0.0, format='(f3.1)', $
+	       TICKINTERVAL = 0.2
+
+	    ;---------------------------------;
+  		;			For NDA 
+  		;
+	    ;set_line_color
+		;cgColorbar, Range=[0.0, 0.3], $
+	    ;   OOB_Low='rose', OOB_High='charcoal', /vertical, /right, title='a.u.', $
+	    ;   position = [0.92, 0.66, 0.93, 0.76 ], charsize=0.9, color=0, OOB_FACTOR=0.0, format='(f3.1)', $
+	    ;   TICKINTERVAL = 0.2
+
+	    ;loadct, 74
+		;reverse_ct
+	  	;cgColorbar, Range=[0.0, 0.4], $
+	    ;   OOB_Low='rose', OOB_High='charcoal', title='  ', /vertical, /right, $
+	    ;   position = [0.92, 0.66, 0.93, 0.76 ], charsize=0.9, color=100, ytickformat='(A1)', OOB_FACTOR=0.0, format='(f3.1)', $
+	    ;   TICKINTERVAL = 0.2   
+
 	
 	if keyword_set(postscript) then begin
 		device, /close
@@ -294,5 +344,5 @@ pro plot_figure2ab, postscript=postscript
 
 ;	x2png,'dam_orfees_burst_20140418.png'
 	
-
+stop
 END

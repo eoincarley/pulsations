@@ -53,7 +53,7 @@ pro plot_spec, data, time, freqs, frange, trange, scl0=scl0, scl1=scl1
 END
 
 
-pro plot_supp_fig5, postscript=postscript
+pro plot_supp_fig7, postscript=postscript
 
 	if ~keyword_set(postscript) then begin
 		!p.charsize=1.5

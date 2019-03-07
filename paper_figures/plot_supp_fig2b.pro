@@ -15,7 +15,7 @@ pro setup_ps, name
 
 end
 
-pro aia_sum_int_plot, postscript=postscript
+pro plot_supp_fig2b, postscript=postscript
 
 	; Code to plot the total intensity of the x-point in various AIA filters.
 	; The intensities were produced from aia_sum_int_20140418.pro

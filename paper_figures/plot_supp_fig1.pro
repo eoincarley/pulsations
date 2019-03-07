@@ -34,7 +34,7 @@ pro plot_flux, times, flux, pos=pos, color=colour, xtickfmt=xtickfmt
 	
 END
 
-pro plot_supp_fig_longflux, postscript=postscript
+pro plot_supp_fig1, postscript=postscript
 
 	; Window setup
 	if keyword_set(postscript) then begin

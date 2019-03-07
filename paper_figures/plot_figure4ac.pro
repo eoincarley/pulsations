@@ -35,7 +35,7 @@ end
 
 END
 
-pro plot_figure4ad
+pro plot_figure4ac
 
 	; v2 version attempts to plot NRH 3 color
 

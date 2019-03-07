@@ -88,7 +88,7 @@ pro plot_fluxes, freq, trange, pos, xaxis=xaxis, color=color
 
 END
 
-pro plot_supp_fig2, postscript=postscript
+pro plot_supp_fig3bc, postscript=postscript
 
 	; Rearrange these plots to create supplementary figure 2
 
@@ -114,8 +114,8 @@ pro plot_supp_fig2, postscript=postscript
 	;pos6 = [0.1, ypos-plot_delt*7.0, 0.93, ypos-plot_delt*6.0- del_inc]
 	;pos6 = [0.1, ypos-plot_delt*6.0, 0.95, ypos-plot_delt*6.0]
 
-	time0 = '2014-04-18T12:56:00'
-	time1 = '2014-04-18T12:57:00'
+	time0 = '2014-04-18T12:53:00'
+	time1 = '2014-04-18T12:58:00'
 	trange = anytim([time0, time1], /utim)
 	plot_fluxes_seperate, 228, trange, pos0
 	set_line_color

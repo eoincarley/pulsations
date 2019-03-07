@@ -8,162 +8,175 @@ pro setup_ps, name
           /color, $
           /helvetica, $
           /inches, $
-          xsize=14, $
-          ysize=7, $
+          xsize=8, $
+          ysize=12, $
           /encapsulate, $
           yoffset=5
 
 end
 
-pro plot_supp_fig4
+pro plot_supp_fig4, postscript=postscript
 
-	; A non-linear limit cycle predicts that the Flux I ~ period t^2. This code attempts to 
-	; find (or not) such a relationship.
-	loadct, 0
-	;!p.background=50
-	;window, 0, xs=1200, ys=600
-	;!p.charsize=1.2
+	; Rearrange these plots to create supplementary figure 2
 
-	restore, '~/Data/2014_apr_18/radio/pulse_props.sav', /verb ; made using limit_cycle_analysis_orfees.pro
-	times = pulse_props.times
-	flux = pulse_props.flux
-	trough_times = pulse_props.trough_times
-	peak_times = pulse_props.peak_times
-	peaks = pulse_props.peaks
-	troughs = pulse_props.troughs
-	times_fine = pulse_props.times_fine
-	flux_fine = pulse_props.flux_fine
-	flux_deriv = pulse_props.flux_deriv
-	time_zeros = pulse_props.time_zeros
-	zeros = pulse_props.zeros
-	pulse_period = pulse_props.pulse_period
-	pulse_flux = pulse_props.pulse_flux
+	; v2 now plots 228-3237 MHz fluxes and polarisations.
 
-	setup_ps, '~/Desktop/pulse_properties.eps'
+	; Window setup
+	if keyword_set(postscript) then begin
+        setup_ps, '~/Data/2014_apr_18/pulsations/nrh_pulse_src_SISV.eps
+	endif else begin
+		window, 0, xs=800, ys=1300, retain=2
+	endelse
 
-	loadct, 0
-	plot, times, flux, $
-		/xs, /ys, $
+	set_line_color
+	ypos = 0.98
+	plot_delt = 0.13
+	del_inc = 0.002
+	pos0 = [0.1, ypos-plot_delt, 0.93, ypos]
+	pos1 = [0.1, ypos-plot_delt*2.0, 0.93, ypos-plot_delt - del_inc]
+	pos2 = [0.1, ypos-plot_delt*3.0, 0.93, ypos-plot_delt*2.0- del_inc]
+	pos3 = [0.1, ypos-plot_delt*4.0, 0.93, ypos-plot_delt*3.0- del_inc]
+	pos4 = [0.1, ypos-plot_delt*5.0, 0.93, ypos-plot_delt*4.0- del_inc]
+	pos5 = [0.1, ypos-plot_delt*6.0, 0.93, ypos-plot_delt*5.0- del_inc]
+	pos6 = [0.1, ypos-plot_delt*7.0, 0.93, ypos-plot_delt*6.0- del_inc]
+	;pos6 = [0.1, ypos-plot_delt*6.0, 0.95, ypos-plot_delt*6.0]
+
+	;-----------------------------------;
+	;			Plot Orfees 
+	;
+	orfees_folder = '~/Data/2014_apr_18/radio/orfees/'
+	freq0 = 180
+	freq1 = 270
+	time0 = '2014-04-18T12:53:00'
+	time1 = '2014-04-18T12:58:00'
+	trange = anytim([time0, time1], /utim)
+	date_string = time2file(time0, /date)
+
+	restore, orfees_folder+'orf_'+date_string+'_bsubbed_minimum.sav', /verb
+	orf_spec = orfees_struct.spec
+	orf_time = orfees_struct.time
+	orf_freqs = orfees_struct.freq
+
+	freq_array = reverse(orf_freqs)
+	index = closest(freq_array, 208)
+	lcurve = orf_spec[*, index]
+
+	utplot, orf_time, lcurve, $
+		/xs, $
+		/ys, $
+		linestyle = 0, $
+		color = 0, $
+		xticklen = 1.0, xgridstyle = 1.0, yticklen = 1.0, ygridstyle = 1.0, $
+		ytitle = 'Intensity (arbitrary)', $
+		xtickformat='(A1)', $
+  		xtitle = ' ', $
+		position = pos0, $
+		xr = trange, $
+		yr=[0.1, 1.2], $
+		/normal, $
+		/noerase
+
+
+	;-------------------------------------------;
+	;	 Plot Stokes I NRH source properties
+	;	
+	restore, '~/Data/2014_apr_18/pulsations/nrh_228_pulse_src1_props_hires_si.sav', /verb	
+	times = anytim(xy_arcs_struct.times, /utim)
+	temp = xy_arcs_struct.Tb
+	flux = xy_arcs_struct.flux_density
+	
+	utplot, times, flux, $
+		/xs, $
+		/ys, $
+		/ylog, $
 		ytitle='Flux (SFU)', $
 		xtickformat='(A1)', $
-		xticklen = 1.0, xgridstyle = 1.0, yticklen = 0.01, $
+		xticklen = 1.0, xgridstyle = 1.0, yticklen = 1.0, ygridstyle = 1.0, $
   		xtitle = ' ', $
-  		yr=[300, 2000], $
-  		xr=xrange, $
+  		yr=[3, 210], $
+		position = pos1, $
+		xr = trange, $
 		/normal, $
 		/noerase, $
-		position=[0.049, 0.5, 0.565, 0.79], color=50
+		color=3
 
+	loadct, 0	
+	plotlinsy = [findgen(10), 1e1*findgen(10), 1e2*findgen(10)]
+	for i=0, n_elements(plotlinsy)-1 do outplot, [times[0], times[n_elements(times)-1]], [plotlinsy[i], plotlinsy[i]], color=140, linestyle=0, thick=0.5
 	set_line_color
-	oplot, trough_times, troughs, psym=1, color=0, thick=5
-	oplot, trough_times, troughs, psym=1, color=4
-	oplot, peak_times, peaks, psym=1, color=0, thick=5	
-	oplot, peak_times, peaks, psym=1, color=10	
-	
-	;------------------------------------------;
-	;
-	;			 First derivative
-	;
-	loadct, 0
-	plot, times_fine, flux_deriv, $
+	outplot, times, flux, color=3	
+
+	restore, '~/Data/2014_apr_18/pulsations/nrh_298_pulse_src1_props_hires_si.sav', /verb	
+	times = anytim(xy_arcs_struct.times, /utim)
+	temp = xy_arcs_struct.Tb
+	flux = xy_arcs_struct.flux_density	
+	outplot, times, flux, color=4
+
+	restore, '~/Data/2014_apr_18/pulsations/nrh_327_pulse_src1_props_hires_si.sav', /verb	
+	times = anytim(xy_arcs_struct.times, /utim)
+	temp = xy_arcs_struct.Tb
+	flux = xy_arcs_struct.flux_density	
+	outplot, times, flux, color=5
+
+	;-------------------------------------------;
+	;	 Plot Stokes V NRH source properties
+	;	
+	; Had a lot of confusion about what convention NRH uses for the sense of polarisation.
+	; From Chernov et al. (1998) A&A 334, he describes Stokes V<0 as right-handed (RHCP_. 
+	; Right-handed/clockwise rotation having V<0 is from the point of view of the
+	; receiver (https://en.wikipedia.org/wiki/Circular_polarization and 
+	; https://en.wikipedia.org/wiki/Stokes_parameters). 
+	; This is opposite to the IEEE/IAU convention, which would call this 
+	; left-handed (LHCP) from the point of view of the source.
+
+	; Either way, the polarisations is -V RHCP from the PoV of the receiver, meaning in a
+	; negative magnetic field the radiation is X-mode polarised.
+
+	; Note also that Orfées shows the pulsations as being +V. Either the data is corrupted or, 
+	; more than likely, Orfées uses the IEEE standard of defining the poalriation from the 
+	; source PoV, meaning it is +V anti-clockwise.
+
+
+	restore, '~/Data/2014_apr_18/pulsations/nrh_228_pulse_src1_props_hires_si.sav', /verb	
+	flux = xy_arcs_struct.flux_density
+	restore, '~/Data/2014_apr_18/pulsations/nrh_228_pulse_src1_props_hires_sv.sav', /verb	
+	V_flux = xy_arcs_struct.flux_density
+	polari = (V_flux/flux)*100.0
+
+	utplot, times, smooth(polari, 2), $
 		/xs, $
 		/ys, $
-		ytitle='Flux (SFU)', $
+		yr = [-80, 0], $
+		ytitle='Polarisation (%)', $
 		;xtickformat='(A1)', $
-		xticklen = 1.0, xgridstyle = 1.0, yticklen = 0.01, $
-  		xtitle = 'Time (s) after 12:54:55 UT', $
-  		;yr=[10, 220], $
-  		xr=xrange, $
+  		xtitle = 'Time (UT)', $
+		xticklen = 1.0, xgridstyle = 1.0, yticklen = 1.0, ygridstyle = 1.0, $
+		position = pos2, $
+		xr = trange, $
 		/normal, $
 		/noerase, $
-		position=[0.049, 0.2, 0.565, 0.49], $
-		color=50	
+		color=3	
 
-	set_line_color
-	oplot, time_zeros, zeros, psym=1, color=6		
+	restore, '~/Data/2014_apr_18/pulsations/nrh_298_pulse_src1_props_hires_si.sav', /verb	
+	flux = xy_arcs_struct.flux_density
+	restore, '~/Data/2014_apr_18/pulsations/nrh_298_pulse_src1_props_hires_sv.sav', /verb	
+	;times = anytim(xy_arcs_struct.times, /utim)
+	V_flux = xy_arcs_struct.flux_density
+	polari = (V_flux/flux)*100.0	
+	outplot, times, smooth(polari, 2), color=4
 
-	;------------------------------------------;
-	;
-	;	   Plot pulse period against flux
-	;
-	pulse_period = pulse_period[where(pulse_flux gt 10.0)]
-	pulse_flux = pulse_flux[where(pulse_flux gt 10.0)]
-	plotsym, 0, /fill
-	;window, 1, xs=500, ys=500
-	plot, pulse_period, pulse_flux, $
-		xtitle='Pulse period (s)', $
-		ytitle='Pulse amplitude (SFU)', $
-		;ytickformat='(A1)', $
-		psym=8, $
-		;/ylog, $
-		/ys, $
-		yr=[1e1, 8e2], $
-		xr=[0.5, 3.5], $
-		/xs, $
-		color=0, $
-		position=[0.61, 0.2, 0.91, 0.79], $
-		/noerase
-	oplot, pulse_period, pulse_flux, color=5, psym=8
-
-	pcc = correlate(pulse_period, pulse_flux)
-	print, 'Pearson CC: '+string(pcc)
-
-	plothist, pulse_period, bin=0.3, pos=[0.61, 0.79, 0.91, 0.95 ], /noerase, color=0, xtickformat='(A1)', $
-		ytitle='No. of pulses'
-
-	;window, 1, xs=500, ys=500
-	plothist, pulse_flux, bin=100, /rotate, yr=[10, 8e2], xr=[0,20], xtitle='No. of pulses', ytickformat='(A1)', $
-		pos=[0.91, 0.2, 0.99, 0.79], /ys, /noerase, color=0, ytitle=' ', xtickv=[5, 10, 15, 20], $
-		xtickname=['5', '10', '15', '20'], xticks=3, /xs
-
-
-	xyouts, 0.62, 0.75, 'Pearson CC: '+string(pcc, format='(f6.2)'), /normal	
-
-	;axis, yaxis=1, yr=[10, 8e2], ytitle=' ', color=1, /ys
-
+	restore, '~/Data/2014_apr_18/pulsations/nrh_327_pulse_src1_props_hires_si.sav', /verb	
+	flux = xy_arcs_struct.flux_density
+	restore, '~/Data/2014_apr_18/pulsations/nrh_327_pulse_src1_props_hires_sv.sav', /verb	
+	;times = anytim(xy_arcs_struct.times, /utim)
+	V_flux = xy_arcs_struct.flux_density
+	polari = (V_flux/flux)*100.0	
+	outplot, times, smooth(polari, 2), color=5
 	
-	device, /close
-	set_plot, 'x'
 
-	;----------------------------------------------------;
-	;
-	;			Limit cycle expectation
-	;
-	window, 1, xs=500, ys=500
-	plot, pulse_period, pulse_flux, $
-		xtitle='Pulse period (s)', $
-		ytitle='Pulse amplitude (SFU)', $
-		;ytickformat='(A1)', $
-		psym=8, $
-		;/ylog, $
-		/ys, $
-		yr=[1e1, 8e2], $
-		xr=[0.5, 3.5], $
-		/xs, $
-		color=0, $
-		/noerase
-	oplot, pulse_period, pulse_flux, color=5, psym=8
-	stop
-	yerr = replicate(0.1, n_elements(pulse_flux))
-	start = [0.1, 0.1]		
-	fit = 'p[0]*x^2.0 + p[1]'	
-	p = mpfitexpr(fit, pulse_period, pulse_flux, $
-					yerr, $
-					yfit=yfit, $
-					weights=weights, $
-					start, $
-					perror = perror, $
-					bestnorm = bestnorm, $
-					dof=dof)	
-
-	;oplot, yfit
-	chisqr_prob = (1.0-chisqr_pdf(bestnorm, dof))*100.0
-	box_message, str2arr('Probability of worse chi-square:,'+string(chisqr_prob)+' %')
-
-	period_sim = interpol([0,10], 1000)
-	flux_sim = p[0]*period_sim^2.0 + p[1]
-	oplot, period_sim, flux_sim, linestyle=1
+if keyword_set(postscript) then device, /close
+set_plot, 'x'
 
 
 stop
-END		
+END

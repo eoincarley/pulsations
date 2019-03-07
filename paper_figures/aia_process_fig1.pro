@@ -1,12 +1,7 @@
-pro aia_process_figure5a, img_name, img_pre_name, hdr, hdr_pre, $
+pro aia_process_fig1, img_name, img_pre_name, hdr, hdr_pre, $
          iscaled_img, im_type, imsize = imsize
 
-        ; This is a simple routine to process AIA images. It belonged to
-        ; aia_three_color_eoin, but in order for IDL bridge to run it, 
-        ; it needed to be an external procesure   
-
-        ; read_sdo, img_name, hdr, img, outsize=2048 ; /nodata, only_tags='exptime,date-obs', /mixed_comp, /noshell 
-        ; read_sdo, img_pre_name, hdr_pre, img_pre, outsize=2048
+        ; Perform the image intensity scaling etc for Figure 1
 
         aia_prep, img_pre_name, -1, hdr_pre, img_pre, /uncomp_delete, /norm
         aia_prep, img_name, -1, hdr, img, /uncomp_delete, /norm
@@ -47,13 +42,13 @@ pro aia_process_figure5a, img_name, img_pre_name, hdr, hdr_pre, $
         endif   
 
         if im_type eq 'ratio' then begin
-            iscaled_img = smooth(img, 5)/smooth(img_pre, 5);smooth(img, 2)/smooth(img_pre, 2)
+            iscaled_img = img/img_pre;smooth(img, 2)/smooth(img_pre, 2)
             undefine, img
             undefine, img_pre
-            iscaled_img = iscaled_img > (0.5) < 1.3;> (0.5) < 1.3; ;>(0.7) < 1.2 ;    ;0.80, 1.5 for ratio image
+            iscaled_img = iscaled_img > (0.85) < 1.12;> (0.5) < 1.3; ;>(0.7) < 1.2 ;    ;0.80, 1.5 for ratio image
             ;iscaled = smooth(iscaled_img, 5)
-            ;hfreq = iscaled_img - smooth(iscaled_img, 20)
-            ;iscaled_img = iscaled_img*0.8 + 0.2*hfreq
+            ;hfreq = iscaled_img - smooth(iscaled_img, 10)
+            ;iscaled_img = iscaled_img + 0.1*hfreq
         endif   
 
  

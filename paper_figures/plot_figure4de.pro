@@ -40,14 +40,31 @@ pro plot_spec, data, time, freqs, frange, trange, scl0=scl0, scl1=scl1
                 yticklen = -0.005, $
                 xtickformat='(A1)', $
                 xtitle = ' '
+
+    ;------------------------------------------;
+    ;           For Orfées 
+    ;
+    set_line_color
+    cgColorbar, Range=[scl0, scl1], $
+       OOB_Low='rose', OOB_High='charcoal', /vertical, /right, title='Normalised Flux', $
+       position = [0.91, 0.36, 0.92, 0.66 ], charsize=1.0, color=0, OOB_FACTOR=0.0, format='(f3.1)', $
+       TICKINTERVAL = 0.2
+
+    loadct, 74
+    reverse_ct
+    cgColorbar, Range=[scl0, scl1], $
+       OOB_Low='rose', OOB_High='charcoal', title='  ', /vertical, /right, $
+       position = [0.91, 0.36, 0.92, 0.66 ], charsize=1.0, color=100, ytickformat='(A1)', OOB_FACTOR=0.0, format='(f3.1)', $
+       TICKINTERVAL = 0.2  
+            
         
     
 END
 
 
-pro plot_figure4e
+pro plot_figure4de, postscript=postscript
 	 
-	setup_ps, '~/pulse_zooms.eps'
+	if keyword_set(postscript) then setup_ps, '~/pulse_zooms.eps'
     ;window, 0, xs=1000, ys=500
     
     time_start = anytim('2014-04-18T12:55:20') ;
@@ -64,7 +81,7 @@ pro plot_figure4e
     date_string = time2file(trange[0], /date)
 
     restore, orfees_folder+'orf_'+date_string+'_bsubbed_median.sav', /verb
-    orf_spec = smooth(orfees_struct.spec, 3)
+    orf_spec = 2.0*(smooth(orfees_struct.spec, 3) + 0.05) ; Scaled arbitrarily
     orf_time = orfees_struct.time
     orf_freqs = orfees_struct.freq
 
@@ -74,7 +91,7 @@ pro plot_figure4e
 
     loadct, 74, /silent
     reverse_ct
-    plot_spec, orf_spec, orf_time, reverse(orf_freqs), [freq0, freq1], trange, scl0=-0.05, scl1=0.45
+    plot_spec, orf_spec, orf_time, reverse(orf_freqs), [freq0, freq1], trange, scl0=0.0, scl1=1.0
     
     fcolors = indgen(n_elements(freq))+3
 
@@ -140,7 +157,7 @@ pro plot_figure4e
     outplot, times, flux/max(flux) -0.65, color=4, linestyle=2, thick=2          
 
 
-     ;-----------------------------;
+    ;-----------------------------;
     ;   Plot 327 MHz light curve
     ;
     index = closest(freq_array, 327.0)
@@ -161,6 +178,7 @@ pro plot_figure4e
     plots, [time3, time3], [int_range], thick=3.5, color=5, /data   
     
 
-    device, /close
+    if keyword_set(postscript) then device, /close
+    set_plot, 'x'
 
 END

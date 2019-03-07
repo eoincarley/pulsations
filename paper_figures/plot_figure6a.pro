@@ -16,7 +16,7 @@ pro setup_ps, name
 end
 
 
-pro plot_pulse_flux_spec, postscript=postscript
+pro plot_figure6a, postscript=postscript
 
 	!p.charsize=1.5
 

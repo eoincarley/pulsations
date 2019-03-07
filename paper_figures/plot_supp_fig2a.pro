@@ -16,7 +16,7 @@ pro setup_ps, name
 
 end
 
-pro plot_supp_figXa, postscript=postscript
+pro plot_supp_fig2a, postscript=postscript
 
 	
 	filters=['131', '094', '335', '171', '193', '211']
