@@ -29,7 +29,7 @@ pro nrh_QPratio_displacement, postscript=postscript
 
 	!p.charsize=1.5	
 	tstart = anytim('2014-04-18T12:55:30.000', /utim)	;anytim(file2time('20140418_125000'), /utim)	;anytim(file2time('20140418_125546'), /utim)	;anytim(file2time('20140418_125310'), /utim)
-	tstop =  anytim('2014-04-18T12:57:30.000', /utim)    ;anytim(file2time('20740418_125440'), /utim)	;anytim(file2time('20140418_125650'), /utim)		;anytim(file2time('20140418_125440'), /utim) 
+	tstop =  anytim('2014-04-18T12:57:30.000', /utim)   ;anytim(file2time('20740418_125440'), /utim)	;anytim(file2time('20140418_125650'), /utim)		;anytim(file2time('20140418_125440'), /utim) 
 	FOV = [5, 5]
 	CENTER = [0.0, -300.0]
 

@@ -43,10 +43,10 @@ pro orfees_plot_pulse_details
 	window, 0, xs=1000, ys=600
 
 	orfees_folder = '~/Data/2014_apr_18/radio/orfees/'
-	freq0 = 180
-	freq1 = 1000
-	time0 = '20140418_125500'
-	time1 = '20140418_125700'
+	freq0 = 170
+	freq1 = 300
+	time0 = '20140418_125400'
+	time1 = '20140418_125740'
 	trange = anytim(file2time([time0, time1]), /utim)
 	date_string = time2file(file2time(time0), /date)
 

@@ -179,7 +179,7 @@ pro plot_spec, data, time, freqs, frange, trange, scl0=scl0, scl1=scl1, plt_pos=
 			string(freqs[n_elements(freqs)-1], format=string('(I4)'))+ ' MHz'
 
 	trange = anytim(file2time(trange), /utim)
-	spectro_plot, smooth(data,1) > (scl0) < (scl1), $
+	spectro_plot, data > (scl0) < (scl1), $
   				time, $
   				freqs, $
   				/xs, $
@@ -196,6 +196,19 @@ pro plot_spec, data, time, freqs, frange, trange, scl0=scl0, scl1=scl1, plt_pos=
   				position = plt_pos, $
   				xticklen = -0.012, $
   				yticklen = -0.015
+
+  	set_line_color
+	cgColorbar, Range=[scl0, scl1], $
+       OOB_Low='rose', OOB_High='charcoal', /vertical, /right, title='Normalised Flux', $
+       position = [0.9, plt_pos[1], 0.91, plt_pos[1]+0.15 ], charsize=1.0, color=0, OOB_FACTOR=0.0, format='(f3.1)', $
+       TICKINTERVAL = 0.2
+
+    loadct, 74
+    reverse_ct
+  	cgColorbar, Range=[scl0, scl1], $
+       OOB_Low='rose', OOB_High='charcoal', title='  ', /vertical, /right, $
+       position =  [0.9, plt_pos[1], 0.91, plt_pos[1]+0.15 ], charsize=1.0, color=100, ytickformat='(A1)', OOB_FACTOR=0.0, format='(f3.1)', $
+       TICKINTERVAL = 0.2			
 		  	
 END
 
@@ -540,19 +553,7 @@ pro plot_supp_fig8, postscript=postscript
 		;***********************************;
 		plot_fermi, trange[0], trange[1], plt_pos=pos1
 
-
-		;***********************************;
-		;		Read and process DAM		
-		;***********************************;
 		
-		cd, dam_folder
-		read_dam, date_string, $
-			dam_spec, dam_time, dam_freqs
-		
-		dam_tim0 = anytim(file2time(time0), /time_only, /trun, /yoh)
-		dam_tim1 = anytim(file2time(time1), /time_only, /trun, /yoh)
-		dam_spec = slide_backsub(dam_spec, dam_time, 15.0*60.0, /minimum)	
-		dam_spec = simple_pass_filter(dam_spec, dam_time, dam_freqs, /low_pass, /time_axis, smoothing=10)	
 
 		;***********************************;
 		;	Read and pre-processed Orfees		
@@ -591,34 +592,53 @@ pro plot_supp_fig8, postscript=postscript
 		plot_radio_flux, orf_spec, orf_time, orf_freqs, nrh_times, nrh_flux, ztrange, plt_pos=pos4, ylog=0, $
 			yrange=[1, 220], smoothing=1, xtickfmt='', xtitle='Time (UT)'
 		plot_rstn, ztrange[0], ztrange[1], pos=pos4, /oplot
-		;skip_orfees: print, 'Skipped Orfees.'
+
+
 		;***********************************;
 		;			   PLOT
+		;***********************************;
+		cd, dam_folder
+		read_dam, date_string, $
+			dam_spec, dam_time, dam_freqs
+		
+		dam_spec = alog10(dam_spec)	
+		dam_spec = constbacksub(dam_spec, /auto)
+		dam_spec = dam_spec*3.0
+
+
+		;***********************************;
+		;	Read and pre-processed Orfees		
 		;***********************************;	
 
+		restore, orfees_folder+'orf_20140418_bsubbed_minimum_sfu.sav', /verb
+		orf_spec = orf_spec/max(orf_spec)
+		orf_spec = orf_spec*3.3  	; Scale arbitrarily so it fits 0-1 intensity range. Neater for colorbar
+	
+
 		plot_times = anytim(file2time([time0, time1]), /utim)
-		utplot, plot_times, [freq1, freq0],	$
-				/xs, $
-  				/ys, $
-  				/ylog, $
-				/nodata, $
-  				ytitle='Frequency (MHz)', $
-  				xtitle=' ', $
-  				XTICKFORMAT="(A1)", $
-  				yr=[freq1, freq0 ], $
-  				xrange = plot_times, $
-  				/noerase, $
-  				position = pos0, $
-  				xticklen = -0.012, $
-  				yticklen = -0.015
 
   		loadct, 74, /silent
-		reverse_ct
-		scl_lwr = -0.4				;Lower intensity scale for the plots.		
+		reverse_ct	
 
-		plot_spec, dam_spec, dam_time, dam_freqs, [freq0, freq1], [time0, time1], scl0=0.07, scl1=0.4, plt_pos=pos0
+		plot_spec, dam_spec, dam_time, dam_freqs, [freq0, freq1], [time0, time1], scl0=0.0, scl1=1.0, plt_pos=pos0
 		
-		plot_spec, orf_spec, orf_time, reverse(orf_freqs), [freq0, freq1], [time0, time1], scl0=-0.1, scl1=1.2, plt_pos=pos0
+		plot_spec, orf_spec, orf_time, orf_freqs, [freq0, freq1], [time0, time1], scl0=0.0, scl1=1.0, plt_pos=pos0
+
+		loadct, 0
+		utplot, plot_times, [freq1, freq0],	$
+			/xs, $
+			/ys, $
+			/ylog, $
+			/nodata, $
+			ytitle='Frequency (MHz)', $
+			xtitle=' ', $
+			XTICKFORMAT="(A1)", $
+			yr=[freq1, freq0 ], $
+			xrange = plot_times, $
+			/noerase, $
+			position = pos0, $
+			xticklen = -0.012, $
+			yticklen = -0.015
 	
 		set_line_color
 		xyouts, 0.115, pos0[3]-0.015, 'a', /normal, color=1, charthick=3	

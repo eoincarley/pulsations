@@ -104,6 +104,8 @@ END
 
 pro plot_nlfff_3D_colors_v2, postscript=postscript
 
+	; Obsolete code. This is now done in Python.
+
 	; Get the loop width in AIA at the radio source position
 	; v2 attempting to overplot the NLFFF.
 

@@ -1,7 +1,7 @@
 pro setup_ps, name
     set_plot,'ps'
     !p.font=0
-    !p.charsize=1.5
+    !p.charsize=1.2
     device, filename = name, $
         ;/decomposed, $
         /color, $
@@ -42,12 +42,27 @@ pro plot_spec, data, time, freqs, frange, trange, scl0=scl0, scl1=scl1
   				yr=[ frange[0], frange[1] ], $
   				xrange = [ trange[0], trange[1] ], $
   				/noerase, $
-  				position = [0.1, 0.1, 0.95, 0.95], $
+  				position = [0.1, 0.1, 0.9, 0.95], $
   				xticklen = -1e-6, $
   				yticklen = -1e-6, $
   				xtickformat='(A1)', $
   				ytickformat='(A1)', $
   				xtitle = ' '
+
+
+  	set_line_color
+	cgColorbar, Range=[scl0, scl1], $
+       OOB_Low='rose', OOB_High='charcoal', /vertical, /right, title='Normalised flux', $
+       position = [0.91, 0.1, 0.92, 0.6 ], charsize=1.0, color=0, OOB_FACTOR=0.0, format='(f3.1)', $
+       TICKINTERVAL = 0.2
+
+    loadct, 74
+	reverse_ct
+  	cgColorbar, Range=[scl0, scl1], $
+       OOB_Low='rose', OOB_High='charcoal', title='  ', /vertical, /right, $
+       position = [0.91, 0.1, 0.92, 0.6 ], charsize=1.0, color=100, ytickformat='(A1)', OOB_FACTOR=0.0, format='(f3.1)', $
+       TICKINTERVAL = 0.2
+					
 		
   	
 END
@@ -73,6 +88,7 @@ pro plot_supp_fig7, postscript=postscript
 
 	restore, orfees_folder+'orf_'+date_string+'_bsubbed_minimum.sav', /verb
 	orf_spec = orfees_struct.spec
+	orf_spec = 3.3*orf_spec/max(orf_spec)
 	orf_time = orfees_struct.time
 	orf_freqs = orfees_struct.freq
 
@@ -93,7 +109,7 @@ pro plot_supp_fig7, postscript=postscript
 	loadct, 74, /silent
 	reverse_ct
 
-	plot_spec, (orf_spec), orf_time, reverse(orf_freqs), [freq0, freq1], trange, scl0=0.2, scl1=1.0
+	plot_spec, (orf_spec), orf_time, reverse(orf_freqs), [freq0, freq1], trange, scl0=0.1, scl1=1.0
 
 	if keyword_set(postscript) then begin
 		device, /close
