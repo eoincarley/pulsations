@@ -42,8 +42,6 @@ function calc_period, Temp, n_i, radius
 	sound_speed = sqrt(gam*kb*Temp/mp) 
 	B = 50 						; G   (From the NLFFF) 
 	va = B/sqrt(4.0*!pi*n_i*mp) ; cm/s
-
-	stop
 	vfast = sqrt(va^2.0 + sound_speed^2)
 	P = radius/vfast				; s
 	print, 'Sausage mode period <='+string(P)+' s'
